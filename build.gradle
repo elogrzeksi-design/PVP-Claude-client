@@ -15,18 +15,8 @@ repositories {
 }
 
 loom {
-	splitEnvironmentSourceSets()
-
-	mods {
-		"claudeclient" {
-			sourceSet sourceSets.main
-			sourceSet sourceSets.client
-		}
-	}
-}
-
-fabricApi {
-	configureDataGeneration()
+	// Mod jest w całości kliencki (PvP utility) - nie potrzebujemy
+	// rozdziału na osobne sourceSety main/client.
 }
 
 dependencies {
