@@ -1,0 +1,28 @@
+{
+	"schemaVersion": 1,
+	"id": "claudeclient",
+	"version": "${version}",
+	"name": "Claude Client",
+	"description": "PvP utility mod \u2014 FPS/CPS counter, keystrokes, gamma control, FPS boost, custom crosshair, attack-range hitbox highlight, freecam, waypoints, auto totem.",
+	"authors": [
+		"ClaudeClient Team"
+	],
+	"contact": {},
+	"license": "MIT",
+	"icon": "assets/claudeclient/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+			"com.claudeclient.ClaudeClient"
+		]
+	},
+	"mixins": [
+		"claudeclient.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.18.1",
+		"minecraft": "~1.21.11",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}

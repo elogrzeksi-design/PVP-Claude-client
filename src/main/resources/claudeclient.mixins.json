@@ -1,0 +1,15 @@
+{
+	"required": true,
+	"package": "com.claudeclient.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"client": [
+		"CameraMixin",
+		"ClientPlayerEntityMixin",
+		"InGameHudMixin",
+		"MouseMixin",
+		"WorldRendererMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
