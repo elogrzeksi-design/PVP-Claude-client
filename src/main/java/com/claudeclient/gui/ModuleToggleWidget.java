@@ -31,7 +31,10 @@ public class ModuleToggleWidget extends ClickableWidget {
 		context.fill(getX(), getY(), getX() + width, getY() + height, bg);
 
 		int borderColor = module.isEnabled() ? Theme.YELLOW : 0xFF4A4A4A;
-		context.drawBorder(getX(), getY(), width, height, borderColor);
+		context.drawHorizontalLine(getX(), getX() + width - 1, getY(), borderColor);
+        context.drawHorizontalLine(getX(), getX() + width - 1, getY() + height - 1, borderColor);
+        context.drawVerticalLine(getX(), getY(), getY() + height - 1, borderColor);
+        context.drawVerticalLine(getX() + width - 1, getY(), getY() + height - 1, borderColor);
 
 		TextRenderer tr = net.minecraft.client.MinecraftClient.getInstance().textRenderer;
 		int textColor = module.isEnabled() ? Theme.WHITE : Theme.OFF_WHITE;
