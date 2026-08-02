@@ -2,17 +2,13 @@ package com.claudeclient.mixin;
 
 import com.claudeclient.modules.CrosshairModule;
 import com.claudeclient.modules.ModuleManager;
+import com.claudeclient.util.Theme;
 import net.minecraft.client.gui.hud.InGameHud;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/**
- * Podmienia teksturę renderowanego celownika, gdy moduł Custom Crosshair
- * jest włączony. Wanilijowy crosshair jest pomijany na rzecz wybranej
- * tekstury z CrosshairModule.
- */
 @Mixin(InGameHud.class)
 public abstract class InGameHudMixin {
 
@@ -25,13 +21,14 @@ public abstract class InGameHudMixin {
 
 		int centerX = context.getScaledWindowWidth() / 2;
 		int centerY = context.getScaledWindowHeight() / 2;
-		int size = 15;
+		int length = 4;
+		int thickness = 1;
 
-		context.drawTexture(
-				module.getStyle().getTexture(),
-				centerX - size / 2, centerY - size / 2,
-				0, 0, size, size, size, size
-		);
+		context.fill(centerX - length, centerY - thickness / 2, centerX - 1, centerY + thickness / 2 + 1, Theme.YELLOW);
+		context.fill(centerX + 1, centerY - thickness / 2, centerX + length, centerY + thickness / 2 + 1, Theme.YELLOW);
+		context.fill(centerX - thickness / 2, centerY - length, centerX + thickness / 2 + 1, centerY - 1, Theme.YELLOW);
+		context.fill(centerX - thickness / 2, centerY + 1, centerX + thickness / 2 + 1, centerY + length, Theme.YELLOW);
+		context.fill(centerX - 1, centerY - 1, centerX + 2, centerY + 2, Theme.ORANGE);
 
 		ci.cancel();
 	}
