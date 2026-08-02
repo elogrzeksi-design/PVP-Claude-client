@@ -3,17 +3,16 @@ package com.claudeclient.gui;
 import com.claudeclient.modules.Module;
 import com.claudeclient.util.Theme;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.MathHelper;
 
-public class ModuleToggleWidget extends ClickableWidget {
+public class ModuleToggleWidget extends ButtonWidget {
 
 	private final Module module;
 
 	public ModuleToggleWidget(int x, int y, int width, int height, Module module) {
-		super(x, y, width, height, Text.literal(module.getName()));
+		super(x, y, width, height, Text.literal(module.getName()), button -> module.toggle(), ButtonWidget.DEFAULT_NARRATION_SUPPLIER);
 		this.module = module;
 	}
 
@@ -38,16 +37,6 @@ public class ModuleToggleWidget extends ClickableWidget {
 		String state = module.isEnabled() ? "ON" : "OFF";
 		int stateColor = module.isEnabled() ? Theme.YELLOW : Theme.DISABLED;
 		context.drawTextWithShadow(tr, state, getX() + width - tr.getWidth(state) - 6, getY() + (height - 8) / 2, stateColor);
-	}
-
-	@Override
-	public void onClick(double mouseX, double mouseY) {
-		module.toggle();
-	}
-
-	@Override
-	protected void appendClickableNarrations(net.minecraft.client.gui.screen.narration.NarrationMessageBuilder builder) {
-		builder.put(net.minecraft.client.gui.screen.narration.NarrationPart.TITLE, module.getName());
 	}
 
 	public Module getModule() {
