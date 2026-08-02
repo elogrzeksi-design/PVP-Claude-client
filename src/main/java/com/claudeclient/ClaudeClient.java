@@ -9,10 +9,6 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Punkt wejścia moda Claude Client (Fabric, client-side only).
- * Rejestruje wszystkie moduły, keybindy i callbacki renderowania HUD.
- */
 public class ClaudeClient implements ClientModInitializer {
 
 	public static final String MOD_ID = "claudeclient";
@@ -25,7 +21,7 @@ public class ClaudeClient implements ClientModInitializer {
 		registerModules();
 		KeybindHandler.register();
 
-		HudRenderCallback.EVENT.register(HudRenderer::render);
+		HudRenderCallback.EVENT.register((context, tickCounter) -> HudRenderer.render(context));
 		ClientTickEvents.END_CLIENT_TICK.register(client -> ModuleManager.tickAll());
 
 		LOGGER.info("Claude Client załadowany pomyślnie.");
