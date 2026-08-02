@@ -50,9 +50,8 @@ public class WaypointModule extends Module {
 			return -1;
 		}
 		BlockPos pos = wp.getPosition();
-		return player.getPos().distanceTo(
-				net.minecraft.util.math.Vec3d.ofCenter(pos)
-		);
+		return new net.minecraft.util.math.Vec3d(player.getX(), player.getY(), player.getZ())
+				.distanceTo(net.minecraft.util.math.Vec3d.ofCenter(pos));
 	}
 
 	/** Azymut (w stopniach) od gracza do waypointa - do rysowania strzałki kierunkowej na HUD. */
