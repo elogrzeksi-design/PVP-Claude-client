@@ -70,7 +70,11 @@ public final class HudRenderer {
 	private static void drawKey(DrawContext context, TextRenderer tr, int x, int y, int size, String label, boolean pressed) {
 		int bg = pressed ? Theme.withAlpha(Theme.ORANGE, 220) : Theme.withAlpha(Theme.BG_BUTTON, 200);
 		context.fill(x, y, x + size - 1, y + size - 1, bg);
-		context.drawBorder(x, y, size - 1, size - 1, pressed ? Theme.YELLOW : 0xFF555555);
+		int borderColor = pressed ? Theme.YELLOW : 0xFF555555;
+        context.drawHorizontalLine(x, x + size - 2, y, borderColor);
+        context.drawHorizontalLine(x, x + size - 2, y + size - 2, borderColor);
+        context.drawVerticalLine(x, y, y + size - 2, borderColor);
+        context.drawVerticalLine(x + size - 2, y, y + size - 2, borderColor);
 		int textColor = pressed ? Theme.WHITE : Theme.OFF_WHITE;
 		context.drawCenteredTextWithShadow(tr, label, x + (size - 1) / 2, y + (size - 1) / 2 - 4, textColor);
 	}
