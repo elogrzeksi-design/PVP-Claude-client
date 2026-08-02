@@ -16,7 +16,7 @@ public final class HudRenderer {
 	private HudRenderer() {
 	}
 
-	public static void render(DrawContext context, float tickDelta) {
+	public static void render(DrawContext context) {
 		MinecraftClient client = MinecraftClient.getInstance();
 		if (client.player == null) {
 			return;
