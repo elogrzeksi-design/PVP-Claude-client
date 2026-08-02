@@ -45,6 +45,11 @@ public class ModuleToggleWidget extends ClickableWidget {
 		module.toggle();
 	}
 
+	@Override
+	protected void appendClickableNarrations(net.minecraft.client.gui.screen.narration.NarrationMessageBuilder builder) {
+		builder.put(net.minecraft.client.gui.screen.narration.NarrationPart.TITLE, module.getName());
+	}
+
 	public Module getModule() {
 		return module;
 	}
