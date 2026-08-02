@@ -6,11 +6,8 @@ import com.claudeclient.util.Waypoint;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.entity.player.PlayerEntity;
 
-/**
- * Rysuje wszystkie elementy HUD włączonych modułów: FPS, CPS, keystrokes,
- * listę waypointów z dystansem. Wywoływane co klatkę z HudRenderCallback.
- */
 public final class HudRenderer {
 
 	private HudRenderer() {
@@ -28,6 +25,7 @@ public final class HudRenderer {
 		y = renderCps(context, tr, y);
 		renderKeystrokes(context, tr);
 		renderWaypoints(context, tr);
+		renderHitboxTarget(context, tr);
 	}
 
 	private static int renderFps(DrawContext context, TextRenderer tr, int y) {
@@ -71,10 +69,10 @@ public final class HudRenderer {
 		int bg = pressed ? Theme.withAlpha(Theme.ORANGE, 220) : Theme.withAlpha(Theme.BG_BUTTON, 200);
 		context.fill(x, y, x + size - 1, y + size - 1, bg);
 		int borderColor = pressed ? Theme.YELLOW : 0xFF555555;
-        context.drawHorizontalLine(x, x + size - 2, y, borderColor);
-        context.drawHorizontalLine(x, x + size - 2, y + size - 2, borderColor);
-        context.drawVerticalLine(x, y, y + size - 2, borderColor);
-        context.drawVerticalLine(x + size - 2, y, y + size - 2, borderColor);
+		context.drawHorizontalLine(x, x + size - 2, y, borderColor);
+		context.drawHorizontalLine(x, x + size - 2, y + size - 2, borderColor);
+		context.drawVerticalLine(x, y, y + size - 2, borderColor);
+		context.drawVerticalLine(x + size - 2, y, y + size - 2, borderColor);
 		int textColor = pressed ? Theme.WHITE : Theme.OFF_WHITE;
 		context.drawCenteredTextWithShadow(tr, label, x + (size - 1) / 2, y + (size - 1) / 2 - 4, textColor);
 	}
@@ -97,5 +95,21 @@ public final class HudRenderer {
 			context.drawTextWithShadow(tr, text, x - width, y, wp.getColor());
 			y += 10;
 		}
+	}
+
+	private static void renderHitboxTarget(DrawContext context, TextRenderer tr) {
+		HitboxHighlightModule module = (HitboxHighlightModule) ModuleManager.get("Hitbox Highlight");
+		if (module == null || !module.isEnabled()) {
+			return;
+		}
+		PlayerEntity target = module.getCurrentTarget();
+		if (target == null) {
+			return;
+		}
+
+		String text = target.getName().getString();
+		int centerX = context.getScaledWindowWidth() / 2;
+		int centerY = context.getScaledWindowHeight() / 2;
+		context.drawCenteredTextWithShadow(tr, text, centerX, centerY - 20, 0xFFFF3030);
 	}
 }
