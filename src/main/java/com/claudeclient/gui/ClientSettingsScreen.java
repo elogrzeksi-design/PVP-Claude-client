@@ -9,11 +9,6 @@ import net.minecraft.text.Text;
 
 import java.util.List;
 
-/**
- * Ekran ustawień otwierany Prawym Shiftem. Stylistyka nawiązuje do menu
- * głównego widocznego na screenie: ciemne, gwiaździste tło, gradientowy
- * nagłówek pomarańczowo-żółty oraz szare przyciski z jasną obwódką.
- */
 public class ClientSettingsScreen extends Screen {
 
 	private final Screen parent;
@@ -52,7 +47,6 @@ public class ClientSettingsScreen extends Screen {
 		renderBackground(context, mouseX, mouseY, delta);
 		drawStarfield(context);
 
-		// Gradientowy tytuł, stylizowany na logo z ekranu głównego
 		context.drawCenteredTextWithShadow(
 				textRenderer,
 				Text.literal("CLAUDE CLIENT").formatted(net.minecraft.util.Formatting.BOLD),
@@ -60,7 +54,7 @@ public class ClientSettingsScreen extends Screen {
 		);
 		context.drawCenteredTextWithShadow(
 				textRenderer,
-				Text.literal("Ustawienia (Prawy Shift, aby zamknąć)"),
+				Text.literal("Ustawienia (Escape, aby zamknąć)"),
 				width / 2, 34, Theme.YELLOW
 		);
 
@@ -69,7 +63,7 @@ public class ClientSettingsScreen extends Screen {
 
 	private void drawStarfield(DrawContext context) {
 		context.fill(0, 0, width, height, Theme.BG_DARK);
-		java.util.Random random = new java.util.Random(42); // deterministyczny wzór "gwiazd"
+		java.util.Random random = new java.util.Random(42);
 		for (int i = 0; i < 80; i++) {
 			int sx = random.nextInt(width);
 			int sy = random.nextInt(height);
@@ -80,16 +74,6 @@ public class ClientSettingsScreen extends Screen {
 	@Override
 	public boolean shouldPause() {
 		return false;
-	}
-
-	@Override
-	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		// Prawy Shift zamyka ekran tak samo jak go otwiera (klawisz-przełącznik)
-		if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT_SHIFT) {
-			close();
-			return true;
-		}
-		return super.keyPressed(keyCode, scanCode, modifiers);
 	}
 
 	@Override
