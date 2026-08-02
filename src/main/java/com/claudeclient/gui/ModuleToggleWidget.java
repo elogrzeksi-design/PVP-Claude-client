@@ -8,11 +8,6 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 
-/**
- * Przycisk-przełącznik dla pojedynczego modułu, stylizowany na wygląd
- * przycisków z głównego menu Clienta (ciemny prostokąt, obwódka,
- * pomarańczowo/żółty akcent gdy aktywny).
- */
 public class ModuleToggleWidget extends ClickableWidget {
 
 	private final Module module;
@@ -32,9 +27,9 @@ public class ModuleToggleWidget extends ClickableWidget {
 
 		int borderColor = module.isEnabled() ? Theme.YELLOW : 0xFF4A4A4A;
 		context.drawHorizontalLine(getX(), getX() + width - 1, getY(), borderColor);
-        context.drawHorizontalLine(getX(), getX() + width - 1, getY() + height - 1, borderColor);
-        context.drawVerticalLine(getX(), getY(), getY() + height - 1, borderColor);
-        context.drawVerticalLine(getX() + width - 1, getY(), getY() + height - 1, borderColor);
+		context.drawHorizontalLine(getX(), getX() + width - 1, getY() + height - 1, borderColor);
+		context.drawVerticalLine(getX(), getY(), getY() + height - 1, borderColor);
+		context.drawVerticalLine(getX() + width - 1, getY(), getY() + height - 1, borderColor);
 
 		TextRenderer tr = net.minecraft.client.MinecraftClient.getInstance().textRenderer;
 		int textColor = module.isEnabled() ? Theme.WHITE : Theme.OFF_WHITE;
@@ -48,11 +43,6 @@ public class ModuleToggleWidget extends ClickableWidget {
 	@Override
 	public void onClick(double mouseX, double mouseY) {
 		module.toggle();
-	}
-
-	@Override
-	protected void appendClickableNarrations(net.minecraft.client.gui.screen.narration.NarrationMessageBuilder builder) {
-		builder.put(net.minecraft.client.gui.screen.narration.NarrationPart.TITLE, module.getName());
 	}
 
 	public Module getModule() {
