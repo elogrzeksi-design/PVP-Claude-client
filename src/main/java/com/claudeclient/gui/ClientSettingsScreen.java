@@ -14,15 +14,18 @@ import java.util.List;
 public class ClientSettingsScreen extends Screen {
 
 	private final Screen parent;
-	private static final int COLUMNS = 2;
-	private static final int BUTTON_WIDTH = 150;
-	private static final int BUTTON_HEIGHT = 20;
-	private static final int PADDING = 8;
+	private static final int COLUMNS = 3;
+	private static final int CARD_WIDTH = 170;
+	private static final int CARD_HEIGHT = 64;
+	private static final int GAP = 10;
+	private static final int TOGGLE_WIDTH = 40;
+	private static final int TOGGLE_HEIGHT = 16;
 
-	private record ButtonInfo(int x, int y, int width, int height, Module module) {
+	private record CardInfo(int x, int y, Module module) {
 	}
 
-	private final List<ButtonInfo> buttonInfos = new ArrayList<>();
+	private final List<CardInfo> cards = new ArrayList<>();
+	private int panelX, panelY, panelWidth, panelHeight;
 
 	public ClientSettingsScreen(Screen parent) {
 		super(Text.of("Claude Client - Ustawienia"));
@@ -32,79 +35,83 @@ public class ClientSettingsScreen extends Screen {
 	@Override
 	protected void init() {
 		super.init();
-		buttonInfos.clear();
+		cards.clear();
 
 		List<Module> modules = ModuleManager.getAll().values().stream().toList();
+		int rows = (int) Math.ceil(modules.size() / (double) COLUMNS);
 
-		int startX = width / 2 - (COLUMNS * BUTTON_WIDTH + PADDING) / 2;
-		int startY = 60;
+		panelWidth = COLUMNS * CARD_WIDTH + (COLUMNS + 1) * GAP;
+		panelHeight = 50 + rows * CARD_HEIGHT + (rows + 1) * GAP;
+		panelX = width / 2 - panelWidth / 2;
+		panelY = height / 2 - panelHeight / 2;
 
 		for (int i = 0; i < modules.size(); i++) {
 			Module module = modules.get(i);
 			int col = i % COLUMNS;
 			int row = i / COLUMNS;
 
-			int x = startX + col * (BUTTON_WIDTH + PADDING);
-			int y = startY + row * (BUTTON_HEIGHT + PADDING);
+			int x = panelX + GAP + col * (CARD_WIDTH + GAP);
+			int y = panelY + 50 + GAP + row * (CARD_HEIGHT + GAP);
 
-			buttonInfos.add(new ButtonInfo(x, y, BUTTON_WIDTH, BUTTON_HEIGHT, module));
+			cards.add(new CardInfo(x, y, module));
 
-			addDrawableChild(ButtonWidget.builder(buttonLabel(module), button -> {
+			int toggleX = x + CARD_WIDTH - TOGGLE_WIDTH - 10;
+			int toggleY = y + CARD_HEIGHT - TOGGLE_HEIGHT - 8;
+
+			addDrawableChild(ButtonWidget.builder(toggleLabel(module), button -> {
 						module.toggle();
-						button.setMessage(buttonLabel(module));
+						button.setMessage(toggleLabel(module));
 					})
-					.dimensions(x, y, BUTTON_WIDTH, BUTTON_HEIGHT)
+					.dimensions(toggleX, toggleY, TOGGLE_WIDTH, TOGGLE_HEIGHT)
 					.build());
 		}
 	}
 
-	private Text buttonLabel(Module module) {
-		String prefix = module.isEnabled() ? "● " : "○ ";
-		return Text.of(prefix + module.getName() + " [" + (module.isEnabled() ? "ON" : "OFF") + "]");
+	private Text toggleLabel(Module module) {
+		int color = module.isEnabled() ? 0xFF55FF55 : 0xFFFF5555;
+		String label = module.isEnabled() ? "ON" : "OFF";
+		return Text.of(label).copy().styled(style -> style.withColor(color));
 	}
 
 	@Override
 	public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-		drawStarfield(context);
-		drawButtonFrames(context);
+		renderBackground(context, mouseX, mouseY, delta);
+		context.fill(0, 0, width, height, 0x90101010);
 
-		context.drawCenteredTextWithShadow(
-				textRenderer,
-				Text.of("CLAUDE CLIENT"),
-				width / 2, 20, Theme.ORANGE
-		);
-		context.drawCenteredTextWithShadow(
-				textRenderer,
-				Text.of("Ustawienia (Escape, aby zamknąć)"),
-				width / 2, 34, Theme.YELLOW
-		);
+		context.fill(panelX, panelY, panelX + panelWidth, panelY + panelHeight, Theme.BG_PANEL);
+		drawFrame(context, panelX, panelY, panelWidth, panelHeight, Theme.ORANGE);
+
+		context.fill(panelX, panelY, panelX + panelWidth, panelY + 34, Theme.withAlpha(Theme.ORANGE_DARK, 255));
+		context.drawTextWithShadow(textRenderer, Text.of("CLAUDE CLIENT"), panelX + 12, panelY + 12, Theme.WHITE);
+		String hint = "Escape, aby zamknąć";
+		context.drawTextWithShadow(textRenderer, Text.of(hint),
+				panelX + panelWidth - textRenderer.getWidth(hint) - 12, panelY + 12, 0xFFFFE0B0);
+
+		for (CardInfo card : cards) {
+			boolean enabled = card.module().isEnabled();
+			int cardBg = enabled ? Theme.withAlpha(Theme.ORANGE_DARK, 90) : Theme.BG_BUTTON;
+			context.fill(card.x(), card.y(), card.x() + CARD_WIDTH, card.y() + CARD_HEIGHT, cardBg);
+
+			int borderColor = enabled ? Theme.YELLOW : 0xFF3A3A3A;
+			drawFrame(context, card.x(), card.y(), CARD_WIDTH, CARD_HEIGHT, borderColor);
+
+			int iconSize = 20;
+			int iconColor = enabled ? Theme.YELLOW : Theme.DISABLED;
+			context.fill(card.x() + 10, card.y() + 10, card.x() + 10 + iconSize, card.y() + 10 + iconSize, iconColor);
+
+			context.drawTextWithShadow(textRenderer, card.module().getName(),
+					card.x() + 10, card.y() + 10 + iconSize + 6,
+					enabled ? Theme.WHITE : Theme.OFF_WHITE);
+		}
 
 		super.render(context, mouseX, mouseY, delta);
 	}
 
-	private void drawButtonFrames(DrawContext context) {
-		for (ButtonInfo info : buttonInfos) {
-			int glowColor = info.module().isEnabled() ? Theme.ORANGE : Theme.YELLOW;
-			int x = info.x() - 2;
-			int y = info.y() - 2;
-			int w = info.width() + 4;
-			int h = info.height() + 4;
-
-			context.drawHorizontalLine(x, x + w - 1, y, glowColor);
-			context.drawHorizontalLine(x, x + w - 1, y + h - 1, glowColor);
-			context.drawVerticalLine(x, y, y + h - 1, glowColor);
-			context.drawVerticalLine(x + w - 1, y, y + h - 1, glowColor);
-		}
-	}
-
-	private void drawStarfield(DrawContext context) {
-		context.fill(0, 0, width, height, Theme.BG_DARK);
-		java.util.Random random = new java.util.Random(42);
-		for (int i = 0; i < 80; i++) {
-			int sx = random.nextInt(width);
-			int sy = random.nextInt(height);
-			context.fill(sx, sy, sx + 1, sy + 1, 0x50FFFFFF);
-		}
+	private void drawFrame(DrawContext context, int x, int y, int w, int h, int color) {
+		context.drawHorizontalLine(x, x + w - 1, y, color);
+		context.drawHorizontalLine(x, x + w - 1, y + h - 1, color);
+		context.drawVerticalLine(x, y, y + h - 1, color);
+		context.drawVerticalLine(x + w - 1, y, y + h - 1, color);
 	}
 
 	@Override
