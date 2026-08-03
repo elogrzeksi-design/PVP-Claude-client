@@ -26,7 +26,7 @@ public abstract class CameraMixin {
 	protected abstract void setRotation(float yaw, float pitch);
 
 	@Inject(method = "update", at = @At("TAIL"))
-	private void claudeclient$applyFreecam(net.minecraft.world.BlockView area, net.minecraft.entity.Entity focusedEntity,
+	private void claudeclient$applyFreecam(net.minecraft.world.World area, net.minecraft.entity.Entity focusedEntity,
 											boolean thirdPerson, boolean inverseView, float tickDelta, CallbackInfo ci) {
 		FreecamModule freecam = (FreecamModule) ModuleManager.get("Freecam");
 		if (freecam == null || !freecam.isEnabled() || freecam.getFreecamPos() == null) {
