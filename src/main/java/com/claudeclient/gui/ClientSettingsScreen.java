@@ -6,12 +6,17 @@ import com.claudeclient.util.Theme;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.render.RenderPipelines;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ClientSettingsScreen extends Screen {
+
+	private static final Identifier TOGGLE_ON = Identifier.of("claudeclient", "textures/gui/toggle/toggle_on.png");
+	private static final Identifier TOGGLE_OFF = Identifier.of("claudeclient", "textures/gui/toggle/toggle_off.png");
 
 	private final Screen parent;
 	private static final int COLUMNS = 3;
@@ -21,7 +26,7 @@ public class ClientSettingsScreen extends Screen {
 	private static final int TOGGLE_WIDTH = 40;
 	private static final int TOGGLE_HEIGHT = 16;
 
-	private record CardInfo(int x, int y, Module module) {
+	private record CardInfo(int x, int y, Module module, int toggleX, int toggleY) {
 	}
 
 	private final List<CardInfo> cards = new ArrayList<>();
@@ -53,24 +58,15 @@ public class ClientSettingsScreen extends Screen {
 			int x = panelX + GAP + col * (CARD_WIDTH + GAP);
 			int y = panelY + 50 + GAP + row * (CARD_HEIGHT + GAP);
 
-			cards.add(new CardInfo(x, y, module));
-
 			int toggleX = x + CARD_WIDTH - TOGGLE_WIDTH - 10;
 			int toggleY = y + CARD_HEIGHT - TOGGLE_HEIGHT - 8;
 
-			addDrawableChild(ButtonWidget.builder(toggleLabel(module), button -> {
-						module.toggle();
-						button.setMessage(toggleLabel(module));
-					})
+			cards.add(new CardInfo(x, y, module, toggleX, toggleY));
+
+			addDrawableChild(ButtonWidget.builder(Text.of(""), button -> module.toggle())
 					.dimensions(toggleX, toggleY, TOGGLE_WIDTH, TOGGLE_HEIGHT)
 					.build());
 		}
-	}
-
-	private Text toggleLabel(Module module) {
-		int color = module.isEnabled() ? 0xFF55FF55 : 0xFFFF5555;
-		String label = module.isEnabled() ? "ON" : "OFF";
-		return Text.of(label).copy().styled(style -> style.withColor(color));
 	}
 
 	@Override
@@ -105,6 +101,12 @@ public class ClientSettingsScreen extends Screen {
 		}
 
 		super.render(context, mouseX, mouseY, delta);
+
+		for (CardInfo card : cards) {
+			Identifier texture = card.module().isEnabled() ? TOGGLE_ON : TOGGLE_OFF;
+			context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, texture,
+					card.toggleX(), card.toggleY(), TOGGLE_WIDTH, TOGGLE_HEIGHT);
+		}
 	}
 
 	private void drawFrame(DrawContext context, int x, int y, int w, int h, int color) {
