@@ -15,9 +15,8 @@ import java.util.List;
 
 public class ClientSettingsScreen extends Screen {
 
-	private static final Identifier TOGGLE_ON = Identifier.of("claudeclient", "textures/gui/toggle/toggle_on.png");
-	private static final Identifier TOGGLE_OFF = Identifier.of("claudeclient", "textures/gui/toggle/toggle_off.png");
-
+	private static final Identifier TOGGLE_ON = Identifier.of("claudeclient", "textures/gui/crosshair/toggle_on.png");
+	private static final Identifier TOGGLE_OFF = Identifier.of("claudeclient", "textures/gui/crosshair/toggle_off.png");
 	private final Screen parent;
 	private static final int COLUMNS = 3;
 	private static final int CARD_WIDTH = 170;
