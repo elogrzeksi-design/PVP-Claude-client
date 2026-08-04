@@ -70,8 +70,7 @@ public class ClientSettingsScreen extends Screen {
 
 	@Override
 	public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-		renderBackground(context, mouseX, mouseY, delta);
-		context.fill(0, 0, width, height, 0x90101010);
+	context.fill(0, 0, width, height, 0x90101010);
 
 		context.fill(panelX, panelY, panelX + panelWidth, panelY + panelHeight, Theme.BG_PANEL);
 		drawFrame(context, panelX, panelY, panelWidth, panelHeight, Theme.ORANGE);
